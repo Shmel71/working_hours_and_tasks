@@ -95,11 +95,11 @@ def start_app():
                 print("Ошибка: введите число от 0 до 2.")
 
         except KeyboardInterrupt:
-            print("\nПриложение прервано пользователем.")
+            print("\nОстановлено пользователем.")
             return False
         except Exception as e:
             create_logger().exception(e)
-            print(f"Неожиданная ошибка: {e}")
+            print(f"Ошибка: {e}")
 
 
 def display_projects():
