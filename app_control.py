@@ -1,18 +1,16 @@
 from connect_to_db import *
 from classes import EmployeeManager, Task, TaskManager, Project
+
 """Тут куча всего. По сути, набор функций от главного меню до расчета зп и добавления новых проектов. 
 Изначально, пытался уйти от простыни кода, разбив проект на модули.
 В результате с простыней и остался....даже не с одной("""
 
+
 def menu():
     """Главное меню приложения."""
     menu_items = {
-        1: "Показать сотрудников",
-        2: "Добавить сотрудника",
-        3: "Удалить сотрудника",
-        4: "Проекты",
-        6: "Добавить отработанные часы",
-        7: "Рассчитать зарплату сотрудника",
+        1: "Сотрудники",
+        2: "Проекты",
         0: "Выход"
     }
 
@@ -24,30 +22,70 @@ def menu():
         print(f"{k}. {v}")
 
     try:
-        choice = int(input("\nВведите номер пункта: "))
-        if choice in menu_items:
-            print(f"Вы выбрали: {menu_items[choice]}")
-            return choice
+        choice_menu = int(input("\nВведите номер пункта: "))
+        if choice_menu in menu_items:
+            print(f"Вы выбрали: {menu_items[choice_menu]}")
+            return choice_menu
         else:
             print("Ошибка! Нет такого пункта меню.")
             return None
     except ValueError:
-        print("Ошибка! Введите число от 0 до 7.")
+        print("Ошибка!")
+        return None
+
+
+def workers_menu():
+    menu_items = {
+        1: "Показать сотрудников",
+        2: "Добавить сотрудника",
+        3: "Удалить сотрудника",
+        4: "Добавить отработанные часы",
+        5: "Рассчитать зарплату сотрудника"
+    }
+
+    print("\n" + "=" * 40)
+    print("УПРАВЛЕНИЕ СОТРУДНИКАМИ")
+    print("=" * 40)
+
+    for k, v in menu_items.items():
+        print(f"{k}. {v}")
+    try:
+        choice_menu = int(input("\nВведите номер пункта: "))
+        if choice_menu in menu_items:
+            print(f"Вы выбрали: {menu_items[choice_menu]}")
+            return choice_menu
+        else:
+            print("Ошибка! Нет такого пункта меню.")
+            return None
+    except ValueError:
+        print("Ошибка! Введите число от 0 до 5.")
         return None
 
 
 def projects_menu():
-    print("\n--- УПРАВЛЕНИЕ ПРОЕКТАМИ ---")
-    print("1. Список проектов")
-    print("2. Детали проекта")
-    print("3. Добавить проект")
-    print("0. Вернуться в главное меню")
+    menu_items = {
+        1: "Список проектов",
+        2: "Детали проекта",
+        3: "Добавить проект",
+        0: "Вернуться в главное меню",
+    }
 
+    print("\n" + "=" * 40)
+    print("УПРАВЛЕНИЕ ПРОЕКТАМИ")
+    print("=" * 40)
+
+    for k, v in menu_items.items():
+        print(f"{k}. {v}")
     try:
-        choice = int(input("\nВведите номер пункта: "))
-        return choice
+        choice_menu = int(input("\nВведите номер пункта: "))
+        if choice_menu in menu_items:
+            print(f"Вы выбрали: {menu_items[choice_menu]}")
+            return choice_menu
+        else:
+            print("Ошибка! Нет такого пункта меню.")
+            return None
     except ValueError:
-        print("Ошибка! Введите число 0–3.")
+        print("Ошибка! Введите число от 0 до 3.")
         return None
 
 
