@@ -322,38 +322,47 @@ def start_app():
             break
 
         elif choice == 1:
-            EmployeeManager.print_all_employees()
+            while True:
+                emp_choice = workers_menu()
+                if emp_choice is None:
+                    continue
+                elif emp_choice == 0:
+                    break
+                elif emp_choice == 1:
+                    EmployeeManager.print_all_employees()
+                elif emp_choice == 2:
+                    emp = EmployeeManager.create_employee()
+                    if emp and EmployeeManager.add_employee_to_db(emp):
+                        print("Сотрудник успешно добавлен в базу данных!")
+                elif emp_choice == 3:
+                    employees = EmployeeManager.get_all_employees()
+                    if not employees:
+                        print("Нет сотрудников для удаления.")
+                        continue
+                    print("\nСписок сотрудников:")
+                    for i, emp in enumerate(employees, 1):
+                        pay = emp.calculate_pay()
+                        print(f"{i}. {emp} → к выплате: {pay} руб.")
+                    num_input = input(f"\nВведите номер сотрудника для удаления (1–{len(employees)}): ").strip()
+                    if num_input.isdigit():
+                        num = int(num_input)
+                        if 1 <= num <= len(employees):
+                            if EmployeeManager.remove_employee_from_db(employees[num - 1]):
+                                print("Сотрудник успешно удалён!")
+                            else:
+                                print("Ошибка при удалении сотрудника.")
+                        else:
+                            print(f"Введите число от 1 до {len(employees)}.")
+                    else:
+                        print("Введите корректное число.")
+                elif emp_choice == 4:
+                    add_hours_to_employee()
+                elif emp_choice == 5:
+                    calculate_employee_pay()
+                else:
+                    print("Ошибка! Нет такого пункта меню.")
 
         elif choice == 2:
-            emp = EmployeeManager.create_employee()
-            if emp and EmployeeManager.add_employee_to_db(emp):
-                print("Сотрудник успешно добавлен в базу данных!")
-
-        elif choice == 3:
-            employees = EmployeeManager.get_all_employees()
-            if not employees:
-                print("Нет сотрудников для удаления.")
-                continue
-
-            print("\nСписок сотрудников:")
-            for i, emp in enumerate(employees, 1):
-                pay = emp.calculate_pay()
-                print(f"{i}. {emp} → к выплате: {pay} руб.")
-
-            num_input = input(f"\nВведите номер сотрудника для удаления (1–{len(employees)}): ").strip()
-            if num_input.isdigit():
-                num = int(num_input)
-                if 1 <= num <= len(employees):
-                    if EmployeeManager.remove_employee_from_db(employees[num - 1]):
-                        print("Сотрудник успешно удалён!")
-                    else:
-                        print("Ошибка при удалении сотрудника.")
-                else:
-                    print(f"Введите число от 1 до {len(employees)}.")
-            else:
-                print("Введите корректное число.")
-
-        elif choice == 4:
             while True:
                 proj_choice = projects_menu()
                 if proj_choice is None:
@@ -369,11 +378,6 @@ def start_app():
                 else:
                     print("Ошибка! Нет такого пункта меню.")
 
-        elif choice == 6:
-            add_hours_to_employee()
-
-        elif choice == 7:
-            calculate_employee_pay()
-
         else:
             print("Ошибка! Нет такого пункта меню.")
+
