@@ -153,8 +153,10 @@ def show_project_details():
                     action = input("\nВыберите действие (0–6): ").strip()
 
                     if action == "5":
+                        create_logger().info("Добавить задачу в проект")
                         create_task_in_project(proj_name)
                     elif action == "6":
+                        create_logger().info("Отметить задачу как завершенную")
                         if not tasks:
                             print("В проекте нет задач для отметки.")
                         else:
@@ -251,6 +253,7 @@ def add_project():
         cursor.execute("INSERT INTO projects (title) VALUES (?)", (project_name,))
         conn.commit()
         conn.close()
+        create_logger().info(f"Проект {project_name} успешно добавлен")
         print(f"Проект '{project_name}' успешно добавлен!")
     except ValueError as e:
         create_logger().error(e)
