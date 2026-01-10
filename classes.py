@@ -1,9 +1,15 @@
 from connect_to_db import connect_to_db
+from logger import create_logger
+
 """Модуль с классами. Добавил EmployeeManager и TaskManager потому что тогда в классах получалась каша из кода.
 Теперь есть Employee и Task которые хранят данные и EmployeeManager и TaskManager которые с ними работают.
 Стало лучше но все равно получилась каша."""
 
+
 class Employee:
+    """Класс представляет сотрудника организации, хранит его основные атрибуты и предоставляет методы для
+    работы с отработанными часами и расчётом заработной платы."""
+
     def __init__(self, name, position, salary, hours_worked=0):
         self.name = name.strip()
         self.position = position
@@ -21,8 +27,10 @@ class Employee:
         return f"{self.name} ({self.position}), зарплата: {self.salary}, отработано: {self.hours_worked} ч."
 
 
-
 class EmployeeManager:
+    """Класс предоставляет методы для управления сотрудниками: создание, получение, вывод,
+    сохранение, удаление и обновление данных в БД."""
+
     @staticmethod
     def create_employee():
         name = input("Введите имя и фамилию: ")
@@ -98,8 +106,10 @@ class EmployeeManager:
         return False
 
 
-
 class Task:
+    """Класс представляет задачу в рамках проекта, хранит её основные атрибуты и предоставляет методы
+    для управления статусом и преобразования данных."""
+
     def __init__(self, title, description, project, status="New", assigned_employee=None):
         self.title = title.strip()
         self.description = description
@@ -129,8 +139,11 @@ class Task:
         return f"Задача: {self.title}\nПроект: {self.project}\nСтатус: {self.status}\nИсполнитель: {executor}\nОписание: {self.description}"
 
 
-
 class TaskManager:
+    """Класс предоставляет методы для управления задачами, проектами и сотрудниками через
+    взаимодействие с базой данных. Включает функционал выбора сотрудников,
+    создания задач и сохранения/обновления данных в БД."""
+
     @staticmethod
     def get_projects():
         projects = []
@@ -254,8 +267,10 @@ class TaskManager:
         return True
 
 
-
 class Project:
+    """Класс представляет проект, управляет связанными с ним задачами и предоставляет
+    методы для анализа прогресса проекта."""
+
     def __init__(self, title):
         self.title = title
         self._tasks = []
@@ -310,3 +325,115 @@ class Project:
     def __str__(self):
         return f"Проект: {self.title} (Задачи: {self.task_count()}, Прогресс: {self.project_progress()}%)"
 
+
+class Validator:
+    """
+    Класс для валидации входных данных в приложении управления сотрудниками и проектами.
+    """
+
+    @staticmethod
+    def validate_menu_choice(choice: str, min_val: int, max_val: int) -> bool:
+        if not choice.isdigit():
+            create_logger().warning(f"Некорректный ввод: '{choice}' не является числом")
+            return False
+
+        num = int(choice)
+        if num < min_val or num > max_val:
+            create_logger().warning(f"Значение {num} выходит за диапазон [{min_val}, {max_val}]")
+            return False
+
+        return True
+
+    @staticmethod
+    def validate_non_empty_string(value: str, field_name: str) -> bool:
+        if not value or not value.strip():
+            create_logger().warning(f"Поле '{field_name}' не может быть пустым")
+            return False
+        return True
+
+    @staticmethod
+    def validate_positive_number(value: str, field_name: str) -> bool:
+        try:
+            num = float(value)
+            if num <= 0:
+                create_logger().warning(f"Значение '{field_name}' должно быть положительным числом")
+                return False
+            return True
+        except ValueError:
+            create_logger().warning(f"Значение '{field_name}' не является числом: '{value}'")
+            return False
+
+    @staticmethod
+    def validate_employee_index(index_str: str, employees_count: int) -> int | None:
+        if not index_str.isdigit():
+            create_logger().warning(f"Номер сотрудника должен быть числом: '{index_str}'")
+            return None
+
+        idx = int(index_str) - 1
+        if idx < 0 or idx >= employees_count:
+            create_logger().warning(
+                f"Номер сотрудника {int(index_str)} вне диапазона [1, {employees_count}]"
+            )
+            return None
+
+        return idx
+
+    @staticmethod
+    def validate_project_index(index_str: str, projects_count: int) -> int | None:
+        if not index_str.isdigit():
+            create_logger().warning(f"Номер проекта должен быть числом: '{index_str}'")
+            return None
+
+        idx = int(index_str) - 1
+        if idx < 0 or idx >= projects_count:
+            create_logger().warning(
+                f"Номер проекта {int(index_str)} вне диапазона [1, {projects_count}]"
+            )
+            return None
+
+        return idx
+
+    @staticmethod
+    def validate_task_index(index_str: str, tasks_count: int) -> int | None:
+        if not index_str.isdigit():
+            create_logger().warning(f"Номер задачи должен быть числом: '{index_str}'")
+            return None
+
+        idx = int(index_str) - 1
+        if idx < 0 or idx >= tasks_count:
+            create_logger().warning(
+                f"Номер задачи {int(index_str)} вне диапазона [1, {tasks_count}]"
+            )
+            return None
+
+        return idx
+
+    @staticmethod
+    def validate_status_choice(choice: str, statuses: list[str]) -> str | None:
+        if not choice.isdigit():
+            create_logger().warning(f"Статус должен быть числом: '{choice}'")
+            return None
+
+        idx = int(choice) - 1
+        if idx < 0 or idx >= len(statuses):
+            create_logger().warning(
+                f"Номер статуса {int(choice)} вне диапазона [1, {len(statuses)}]"
+            )
+            return None
+
+        return statuses[idx]
+
+    @staticmethod
+    def validate_employee_choice(choice: str, employees: list[tuple]) -> str | None:
+        if not choice.isdigit():
+            create_logger().warning(f"Номер сотрудника должен быть числом: '{choice}'")
+            return None
+
+        idx = int(choice) - 1
+        if idx < 0 or idx >= len(employees):
+            create_logger().warning(
+                f"Номер сотрудника {int(choice)} вне диапазона [1, {len(employees)}]"
+            )
+            return None
+
+        return employees[idx][1]
